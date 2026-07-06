@@ -1,1 +1,60 @@
-C:\Users\kw0919.kim\AppData\Local\Temp\claude\C--Users-kw0919-kim--claude\0bbc9a89-487b-4676-8afd-b8a704193184\scratchpad\index.html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechNewsius — 오늘의 미국 테크 뉴스 Top 10</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
+    header { background: linear-gradient(135deg, #161b22 0%, #0d1117 100%); border-bottom: 1px solid #30363d; padding: 24px 0; text-align: center; }
+    header h1 { font-size: 2rem; font-weight: 700; background: linear-gradient(90deg, #58a6ff, #bc8cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    header p { color: #8b949e; margin-top: 6px; font-size: 0.9rem; }
+    #updated-at { display: inline-block; margin-top: 10px; background: #21262d; border: 1px solid #30363d; border-radius: 20px; padding: 4px 14px; font-size: 0.8rem; color: #58a6ff; }
+    main { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+    .news-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; transition: border-color 0.2s, transform 0.2s; }
+    .news-card:hover { border-color: #58a6ff; transform: translateY(-2px); }
+    .news-rank { font-size: 0.75rem; font-weight: 700; color: #58a6ff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .news-title { font-size: 1.1rem; font-weight: 600; color: #e6edf3; margin-bottom: 10px; line-height: 1.4; }
+    .news-title a { color: inherit; text-decoration: none; }
+    .news-title a:hover { color: #58a6ff; }
+    .news-summary { font-size: 0.9rem; color: #8b949e; line-height: 1.6; }
+    .news-meta { margin-top: 12px; display: flex; gap: 12px; font-size: 0.8rem; color: #6e7681; }
+    footer { text-align: center; padding: 40px 20px; color: #6e7681; font-size: 0.8rem; border-top: 1px solid #21262d; }
+    .loading { text-align: center; padding: 60px 20px; color: #8b949e; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📡 TechNewsius</h1>
+    <p>매일 아침 9시, 미국 테크 뉴스 Top 10을 한국어로</p>
+    <span id="updated-at">업데이트 중...</span>
+  </header>
+  <main id="news-container">
+    <div class="loading">⏳ 뉴스를 불러오는 중입니다...</div>
+  </main>
+  <footer>
+    <p>Powered by Hacker News · 매일 KST 09:00 자동 업데이트</p>
+  </footer>
+  <script>
+    async function loadNews() {
+      try {
+        const res = await fetch('news.json?t=' + Date.now());
+        const data = await res.json();
+        document.getElementById('updated-at').textContent = '🕘 ' + data.updated_at + ' 업데이트';
+        const container = document.getElementById('news-container');
+        container.innerHTML = data.articles.map((a, i) => `
+          <div class="news-card">
+            <div class="news-rank">Top ${i + 1}</div>
+            <div class="news-title">${a.url ? `<a href="${a.url}" target="_blank" rel="noopener">${a.title}</a>` : a.title}</div>
+            <div class="news-summary">${a.summary}</div>
+            <div class="news-meta"><span>🔥 ${a.score}점</span><span>💬 ${a.comments}개 댓글</span></div>
+          </div>`).join('');
+      } catch (e) {
+        document.getElementById('news-container').innerHTML = '<div class="loading">아직 뉴스 데이터가 없습니다. 매일 오전 9시에 업데이트됩니다.</div>';
+      }
+    }
+    loadNews();
+  </script>
+</body>
+</html>
